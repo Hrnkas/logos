@@ -55,21 +55,19 @@ def action_left():
 def action_right():
     execute_and_store_command({'action': 'right', 'value': 30})
 
-# --- Add new actions here ---
 def action_pen_up():
     execute_and_store_command({'action': 'pen_up'})
 
 def action_pen_down():
     execute_and_store_command({'action': 'pen_down'})
 
-# --- Add new action here ---
 def action_clear_screen():
     drawing_surface.fill(WHITE) # Clears the drawing canvas
 
     # Reset turtle's state
     # These values should match the turtle's initial instantiation values in main.py
     initial_x = SCREEN_WIDTH // 2
-    initial_y = (SCREEN_HEIGHT - 100) // 2 # Assuming this is the calculation used at instantiation
+    initial_y = drawable_height // 2 # Assuming this is the calculation used at instantiation
     initial_angle = 0
 
     turtle.x = initial_x
@@ -79,8 +77,14 @@ def action_clear_screen():
 
     # Clear the command history
     command_history.clear()
-# --- End new actions ---
-# --- End new actions ---
+
+def action_undo_last_command():
+    if command_history: # Check if the list is not empty
+        command_history.pop() # Remove the last command
+        replay_history(command_history) # Replay the modified history
+    else:
+        # Optional: print("No commands to undo.") or some status bar message
+        pass # Do nothing if history is empty
 
 button_forward = Button(
     x=BUTTON_MARGIN,
@@ -202,7 +206,7 @@ def replay_history(history_to_replay):
     # 2. Reset the turtle to its initial state
     # These values should match the turtle's initial instantiation values
     initial_x = SCREEN_WIDTH // 2
-    initial_y = (SCREEN_HEIGHT - 100) // 2 # Consistent with turtle instantiation
+    initial_y = drawable_height // 2 # Consistent with turtle instantiation
     initial_angle = 0
 
     turtle.x = initial_x
@@ -216,14 +220,6 @@ def replay_history(history_to_replay):
 
     # Note: The main game loop will handle blitting drawing_surface
     # and drawing the turtle icon in its final replayed state.
-
-def action_undo_last_command():
-    if command_history: # Check if the list is not empty
-        command_history.pop() # Remove the last command
-        replay_history(command_history) # Replay the modified history
-    else:
-        # Optional: print("No commands to undo.") or some status bar message
-        pass # Do nothing if history is empty
 
 # Game loop
 running = True
