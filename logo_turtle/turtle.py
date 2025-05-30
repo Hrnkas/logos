@@ -61,7 +61,7 @@ class Turtle:
             # self.angle is defined as 0=Up, positive is clockwise.
             # pygame.math.Vector2.rotate() rotates counter-clockwise.
             # So, to rotate by self.angle clockwise, we pass -self.angle.
-            rotated_vec = point_vec.rotate(-self.angle)
+            rotated_vec = point_vec.rotate(self.angle)
             rotated_points.append((self.x + rotated_vec.x, self.y + rotated_vec.y))
 
         # Visual feedback for pen state
