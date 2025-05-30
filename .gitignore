@@ -172,3 +172,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# PyInstaller files
+/dist/
+/build/
+*.spec
+
+# Build virtual environment
+/venv_build/

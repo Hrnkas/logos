@@ -47,3 +47,29 @@ This project creates a basic turtle graphics environment. Users can control a "t
    `source venv/bin/activate`  # On Windows use `venv\Scripts\activate`
 3. Install dependencies: `pip install -r requirements.txt`
 4. Run the main file: `python logo_turtle/main.py`
+
+## Building the Executable (Windows)
+
+This project can be compiled into a Windows executable using PyInstaller. A batch script is provided to automate this process.
+
+**Prerequisites:**
+- Python installed and added to your PATH.
+
+**Build Steps:**
+
+1.  **Open Command Prompt:** Navigate to the root directory of the project in your command prompt.
+2.  **Run the build script:**
+    ```bash
+    build.bat
+    ```
+    This script will:
+    - Create a local virtual environment named `venv_build`.
+    - Install dependencies from `requirements.txt` and `requirements-dev.txt` (which includes `pyinstaller`).
+    - Run `pyinstaller` to package the application.
+3.  **Find the Executable:**
+    - Upon successful completion, the executable will be located in the `dist\LogoTurtle` folder. You can run `LogoTurtle.exe` from there.
+    - The `build` folder and `*.spec` file are temporary files created by PyInstaller and can be ignored (they will be removed by the `--clean` option on the next build or can be added to `.gitignore`).
+
+**Notes:**
+- The build script currently creates a one-folder bundle (`--onedir`). This means it generates a folder with the main executable and its dependencies.
+- If you wish to add a custom icon, you can place an `.ico` file (e.g., in an `assets` directory) and uncomment/modify the `ICON_PATH` variable and the `--icon` option in `build.bat`.
