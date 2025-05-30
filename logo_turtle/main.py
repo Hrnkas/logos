@@ -70,7 +70,7 @@ def action_clear_screen():
     # Reset turtle's state
     # These values should match the turtle's initial instantiation values in main.py
     initial_x = SCREEN_WIDTH // 2
-    initial_y = (SCREEN_HEIGHT - 100) // 2 # Assuming this is the calculation used at instantiation
+    initial_y = drawable_height // 2 # Match the calculation used at instantiation
     initial_angle = 0
 
     turtle.x = initial_x
