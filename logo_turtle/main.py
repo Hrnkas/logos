@@ -25,6 +25,10 @@ YELLOW = (255, 255, 0) # For Clear Screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption(SCREEN_TITLE)
 
+# Create a dedicated surface for drawing lines
+drawing_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+drawing_surface.fill(WHITE) # Initial background for the drawing canvas
+
 # Clock for controlling frame rate
 clock = pygame.time.Clock()
 
@@ -32,7 +36,7 @@ clock = pygame.time.Clock()
 # Adjust Y position to be in the drawable area, considering buttons at the bottom
 # Buttons are ~50px high (40px + 10px margin). Let's center turtle in remaining space.
 drawable_height = SCREEN_HEIGHT - 50
-turtle = Turtle(SCREEN_WIDTH // 2, drawable_height // 2, angle=0, color=RED)
+turtle = Turtle(SCREEN_WIDTH // 2, drawable_height // 2, angle=0, color=RED, drawing_surface=drawing_surface) # Pass drawing_surface
 
 # --- Create Buttons ---
 BUTTON_WIDTH = 120
@@ -42,7 +46,7 @@ BUTTON_Y = SCREEN_HEIGHT - BUTTON_HEIGHT - BUTTON_MARGIN # Y position for all bu
 
 # Define actions for the turtle
 def action_forward():
-    turtle.forward(20, screen) # Pass screen object
+    turtle.forward(20) # No longer pass 'screen' here
 
 def action_left():
     turtle.left(30)
@@ -59,10 +63,18 @@ def action_pen_down():
 
 # --- Add new action here ---
 def action_clear_screen():
-    screen.fill(WHITE)
-    # Note: In the current main loop, screen.fill(WHITE) happens every frame anyway.
-    # This action provides an explicit user command. If drawing becomes persistent on a
-    # separate surface later, this function would clear that surface.
+    drawing_surface.fill(WHITE) # Clears the drawing canvas
+
+    # Reset turtle's state
+    # These values should match the turtle's initial instantiation values in main.py
+    initial_x = SCREEN_WIDTH // 2
+    initial_y = (SCREEN_HEIGHT - 100) // 2 # Assuming this is the calculation used at instantiation
+    initial_angle = 0
+
+    turtle.x = initial_x
+    turtle.y = initial_y
+    turtle.angle = initial_angle
+    turtle.pen_down() # Reset to default pen state (drawing enabled)
 # --- End new actions ---
 # --- End new actions ---
 
@@ -156,7 +168,7 @@ while running:
         # --- Add Keyboard Event Handling Here ---
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                turtle.forward(20, screen) # Distance 20, screen for drawing
+                turtle.forward(20) # No longer pass 'screen' here
             elif event.key == pygame.K_LEFT:
                 turtle.left(30) # Angle 30
             elif event.key == pygame.K_RIGHT:
@@ -167,11 +179,15 @@ while running:
     # (Turtle state is updated by button actions via their callbacks or keyboard events)
 
     # Draw graphics
-    screen.fill(WHITE)  # Fill screen with white
+    screen.fill(WHITE)  # Clear main screen (especially if UI elements are drawn on it directly)
 
-    turtle.draw(screen) # Draw the turtle
+    # Blit the drawing_surface onto the main screen
+    screen.blit(drawing_surface, (0, 0))
 
-    # Draw buttons
+    # Draw the turtle icon itself (triangle) on the main screen
+    turtle.draw(screen)
+
+    # Draw buttons (on main screen)
     for btn in buttons:
         btn.draw(screen)
 

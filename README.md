@@ -14,7 +14,7 @@ This project creates a basic turtle graphics environment. Users can control a "t
   - **Turn Right:** Rotates the turtle to its right.
   - **Pen Up:** Lifts the turtle's pen (turtle shown as outline), so it won't draw when moving.
   - **Pen Down:** Lowers the turtle's pen (turtle shown as filled shape), so it will draw when moving.
-  - **Clear Screen:** Clears all drawings made by the turtle from the screen.
+  - **Clear Screen:** Clears all drawings and resets the turtle to its starting position, orientation (up), and pen state (down).
 - **Keyboard Controls:**
   - Arrow keys for basic turtle movement (forward, turn left, turn right).
 - Basic Pygame window setup.
@@ -27,7 +27,7 @@ This project creates a basic turtle graphics environment. Users can control a "t
 - **Turn Right Button:** Rotates the turtle 30 degrees clockwise.
 - **Pen Up Button:** Sets pen to "up" (turtle appears as outline, no drawing on move).
 - **Pen Down Button:** Sets pen to "down" (turtle appears filled, drawing on move enabled).
-- **Clear Screen Button:** (Top-right corner) Clears all turtle drawings from the screen, providing a blank canvas.
+- **Clear Screen Button:** (Top-right corner) Clears all turtle drawings from the screen and resets the turtle to its initial position (center), orientation (up), and pen state (down).
 ### Keyboard Shortcuts
 - **Up Arrow:** Moves the turtle forward by 20 units.
 - **Left Arrow:** Rotates the turtle 30 degrees counter-clockwise.
