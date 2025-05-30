@@ -17,6 +17,8 @@ RED = (255, 0, 0)
 GREEN = (0, 200, 0) # For Forward button
 BLUE = (0, 0, 200)  # For Turn buttons
 LIGHT_GREY = (220, 220, 220)
+ORANGE = (255, 165, 0) # For Pen Up
+CYAN = (0, 255, 255)   # For Pen Down
 
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -46,6 +48,14 @@ def action_left():
 
 def action_right():
     turtle.right(30)
+
+# --- Add new actions here ---
+def action_pen_up():
+    turtle.pen_up()
+
+def action_pen_down():
+    turtle.pen_down()
+# --- End new actions ---
 
 button_forward = Button(
     x=BUTTON_MARGIN,
@@ -79,8 +89,31 @@ button_right = Button(
     action=action_right
 )
 
-buttons = [button_forward, button_left, button_right]
-# --- End Buttons ---
+# --- Define new Pen Up / Pen Down buttons ---
+button_pen_up = Button(
+    x=BUTTON_MARGIN + (BUTTON_WIDTH + BUTTON_MARGIN) * 3, # Position after Right button
+    y=BUTTON_Y,
+    width=BUTTON_WIDTH,
+    height=BUTTON_HEIGHT,
+    text="Pen Up",
+    color=ORANGE,
+    action=action_pen_up
+)
+
+button_pen_down = Button(
+    x=BUTTON_MARGIN + (BUTTON_WIDTH + BUTTON_MARGIN) * 4, # Position after Pen Up button
+    y=BUTTON_Y,
+    width=BUTTON_WIDTH,
+    height=BUTTON_HEIGHT,
+    text="Pen Down",
+    color=CYAN,
+    text_color=BLACK, # Ensure text is visible
+    action=action_pen_down
+)
+
+# Add new buttons to the list
+buttons = [button_forward, button_left, button_right, button_pen_up, button_pen_down]
+# --- End button updates ---
 
 # Game loop
 running = True
