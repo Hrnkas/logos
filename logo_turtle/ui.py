@@ -42,5 +42,5 @@ class Button:
             if event.button == 1 and self.is_clicked(event.pos): # event.button == 1 means left click
                 if self.action:
                     self.action() # Execute the button's action
-                    return True # Indicate that the event was handled by this button
+                return True # Indicate that the event was handled by this button
         return False # Event not handled by this button
