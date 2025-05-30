@@ -2,12 +2,14 @@ import pygame
 import math
 
 class Turtle:
-    def __init__(self, x, y, angle=0, color=(0, 0, 0)): # Default angle 0 (pointing up/north)
+
+    def __init__(self, x, y, angle=0, color=(0, 0, 0), drawing_surface=None): # Added drawing_surface
         self.x = x
         self.y = y
         self.angle = angle  # Angle in degrees, 0 is up (north), 90 is right (east)
         self.color = color
         self.is_pen_down = True # Pen is down by default
+        self.drawing_surface = drawing_surface # Store it
 
     def draw(self, surface):
         # Triangle points: base_left, base_right, tip
@@ -20,7 +22,7 @@ class Turtle:
         # and rotate clockwise.
         # math.sin and math.cos expect radians.
         # Angle: 0=Up, 90=Right, 180=Down, 270=Left
-        
+
         # Center of the turtle
         center_x = self.x
         center_y = self.y
@@ -39,7 +41,7 @@ class Turtle:
         # Base Left: (-size, 2/3 * size)
         # Base Right: (size, 2/3 * size)
         # Let's use a simpler model: tip is (0, -size), base corners are (-size*0.75, size*0.5) and (size*0.75, size*0.5)
-        
+
         # Points for a triangle pointing upwards (angle = 0) centered at (0,0)
         # Height of triangle = 2 * size, Base of triangle = 1.5 * size
         points_no_rotation = [
@@ -53,17 +55,25 @@ class Turtle:
         # Our angle: 0 is North (Up, -Y), 90 is East (Right, +X)
         # So, we need to convert our angle to standard math angle for rotation.
         # Math angle = 90 - Turtle angle (or (450 - Turtle angle) % 360)
-        math_angle_rad = math.radians(90 - self.angle) 
-        
+        # --- Using pygame.math.Vector2 for rotation ---
         rotated_points = []
         for x_rel, y_rel in points_no_rotation:
-            x_rot = x_rel * math.cos(math_angle_rad) - y_rel * math.sin(math_angle_rad)
-            y_rot = x_rel * math.sin(math_angle_rad) + y_rel * math.cos(math_angle_rad)
-            rotated_points.append((self.x + x_rot, self.y + y_rot))
+            point_vec = pygame.math.Vector2(x_rel, y_rel)
+            # self.angle is defined as 0=Up, positive is clockwise.
+            # pygame.math.Vector2.rotate() rotates counter-clockwise.
+            # So, to rotate by self.angle clockwise, we pass -self.angle.
+            rotated_vec = point_vec.rotate(self.angle)
+            rotated_points.append((self.x + rotated_vec.x, self.y + rotated_vec.y))
 
-        pygame.draw.polygon(surface, self.color, rotated_points)
+        # Visual feedback for pen state
+        if self.is_pen_down:
+            # Pen down: Draw filled polygon (black)
+            pygame.draw.polygon(surface, (0, 0, 0), rotated_points, 0) # 0 for fill
+        else:
+            # Pen up: Draw outline polygon (using turtle's color)
+            pygame.draw.polygon(surface, self.color, rotated_points, 2) # width > 0 for outline
 
-    def forward(self, distance):
+    def forward(self, distance): # Removed surface parameter
         # Convert angle to radians
         # Angle: 0=Up (-Y), 90=Right (+X)
         # dx = distance * sin(angle_rad)
@@ -71,19 +81,18 @@ class Turtle:
         rad_angle = math.radians(self.angle)
         delta_x = distance * math.sin(rad_angle)
         delta_y = -distance * math.cos(rad_angle) # Negative because screen Y is downwards
-        
+
         new_x = self.x + delta_x
         new_y = self.y + delta_y
-        
-        # If pen is down, draw a line
-        # For now, just update position. Line drawing will be part of a separate draw_line method or handled in main.
-        # This 'forward' method is more about calculating the new position.
-        
+
+        if self.is_pen_down and self.drawing_surface: # Check if surface exists
+            pygame.draw.line(self.drawing_surface, self.color, (self.x, self.y), (new_x, new_y), 2)
+
         self.x = new_x
         self.y = new_y
 
-    def backward(self, distance):
-        self.forward(-distance)
+    def backward(self, distance): # Removed surface parameter
+        self.forward(-distance) # Call forward without surface
 
     def left(self, degrees):
         self.angle = (self.angle - degrees) % 360 # Subtract for left turn
