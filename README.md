@@ -7,7 +7,7 @@ This project creates a basic turtle graphics environment. Users can control a "t
 ## Current Features
 - A `Turtle` character that can be positioned and oriented on the screen.
 - The turtle is rendered as a triangle.
-- **Visual Pen State Feedback:** The turtle triangle is drawn filled (black) when the pen is down, and as an outline (using its designated color) when the pen is up.
+  - **Visual Pen State Feedback:** The turtle triangle is drawn filled (black) when the pen is down, and as an outline (using its designated color) when the pen is up.
 - **UI Buttons for Turtle, Pen, and Screen Control:**
   - **Forward:** Moves the turtle forward. Draws a line if the pen is down.
   - **Turn Left:** Rotates the turtle to its left.
@@ -15,6 +15,7 @@ This project creates a basic turtle graphics environment. Users can control a "t
   - **Pen Up:** Lifts the turtle's pen (turtle shown as outline), so it won't draw when moving.
   - **Pen Down:** Lowers the turtle's pen (turtle shown as filled shape), so it will draw when moving.
   - **Clear Screen:** Clears all drawings and resets the turtle to its starting position, orientation (up), and pen state (down).
+  - **Undo:** Reverts the last executed turtle action (movement, turn, or pen state change).
 - **Keyboard Controls:**
   - Arrow keys for basic turtle movement (forward, turn left, turn right).
 - Basic Pygame window setup.
@@ -28,6 +29,7 @@ This project creates a basic turtle graphics environment. Users can control a "t
 - **Pen Up Button:** Sets pen to "up" (turtle appears as outline, no drawing on move).
 - **Pen Down Button:** Sets pen to "down" (turtle appears filled, drawing on move enabled).
 - **Clear Screen Button:** (Top-right corner) Clears all turtle drawings from the screen and resets the turtle to its initial position (center), orientation (up), and pen state (down).
+- **Undo Button:** (Top-right area, near Clear Screen) Reverses the last turtle command (Forward, Left, Right, Pen Up, Pen Down). The command history is cleared when "Clear Screen" is used.
 ### Keyboard Shortcuts
 - **Up Arrow:** Moves the turtle forward by 20 units.
 - **Left Arrow:** Rotates the turtle 30 degrees counter-clockwise.
@@ -41,12 +43,21 @@ This project creates a basic turtle graphics environment. Users can control a "t
 
 ## Running the Project
 
-1. Ensure you have Python installed.
-2. Create a virtual environment (optional but recommended):
-   `python -m venv venv`
-   `source venv/bin/activate`  # On Windows use `venv\Scripts\activate`
-3. Install dependencies: `pip install -r requirements.txt`
-4. Run the main file: `python logo_turtle/main.py`
+1.  Ensure you have Python installed.
+2.  Navigate to the **root directory** of this project in your terminal.
+3.  Create a virtual environment (optional but recommended):
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
+4.  Install dependencies from the virtual environment:
+    ```bash
+    pip install -r requirements.txt
+    ```
+5.  Run the application from the **project's root directory**:
+    ```bash
+    python -m logo_turtle.main
+    ```
 
 ## Building the Executable (Windows)
 
@@ -73,4 +84,3 @@ This project can be compiled into a Windows executable using PyInstaller. A batc
 **Notes:**
 - The build script currently creates a one-folder bundle (`--onedir`). This means it generates a folder with the main executable and its dependencies.
 - If you wish to add a custom icon, you can place an `.ico` file (e.g., in an `assets` directory) and uncomment/modify the `ICON_PATH` variable and the `--icon` option in `build.bat`.
-

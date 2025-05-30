@@ -1,7 +1,6 @@
 import pygame
-
-from logo_turtle.turtle import Turtle
-from logo_turtle.ui import Button # Import Button
+from .turtle import Turtle # Relative import
+from .ui import Button # Relative import
 
 # Initialize Pygame
 pygame.init()
@@ -21,11 +20,11 @@ LIGHT_GREY = (220, 220, 220)
 ORANGE = (255, 165, 0) # For Pen Up
 CYAN = (0, 255, 255)   # For Pen Down
 YELLOW = (255, 255, 0) # For Clear Screen
+PURPLE = (128, 0, 128) # For Undo button
 
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption(SCREEN_TITLE)
-
 
 # Create a dedicated surface for drawing lines
 drawing_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -48,20 +47,20 @@ BUTTON_Y = SCREEN_HEIGHT - BUTTON_HEIGHT - BUTTON_MARGIN # Y position for all bu
 
 # Define actions for the turtle
 def action_forward():
-    turtle.forward(20) # No longer pass 'screen' here
+    execute_and_store_command({'action': 'forward', 'value': 20})
 
 def action_left():
-    turtle.left(30)
+    execute_and_store_command({'action': 'left', 'value': 30})
 
 def action_right():
-    turtle.right(30)
+    execute_and_store_command({'action': 'right', 'value': 30})
 
 # --- Add new actions here ---
 def action_pen_up():
-    turtle.pen_up()
+    execute_and_store_command({'action': 'pen_up'})
 
 def action_pen_down():
-    turtle.pen_down()
+    execute_and_store_command({'action': 'pen_down'})
 
 # --- Add new action here ---
 def action_clear_screen():
@@ -70,13 +69,16 @@ def action_clear_screen():
     # Reset turtle's state
     # These values should match the turtle's initial instantiation values in main.py
     initial_x = SCREEN_WIDTH // 2
-    initial_y = drawable_height // 2 # Match the calculation used at instantiation
+    initial_y = (SCREEN_HEIGHT - 100) // 2 # Assuming this is the calculation used at instantiation
     initial_angle = 0
 
     turtle.x = initial_x
     turtle.y = initial_y
     turtle.angle = initial_angle
     turtle.pen_down() # Reset to default pen state (drawing enabled)
+
+    # Clear the command history
+    command_history.clear()
 # --- End new actions ---
 # --- End new actions ---
 
@@ -153,7 +155,75 @@ button_clear_screen = Button(
 )
 
 buttons.append(button_clear_screen)
+
+# --- Define new Undo button ---
+undo_button_x = SCREEN_WIDTH - (BUTTON_WIDTH + BUTTON_MARGIN) * 2 # To the left of Clear
+undo_button_y = BUTTON_MARGIN
+
+button_undo = Button(
+    x=undo_button_x,
+    y=undo_button_y,
+    width=BUTTON_WIDTH,
+    height=BUTTON_HEIGHT,
+    text="Undo",
+    color=PURPLE,
+    text_color=WHITE,
+    action=action_undo_last_command
+)
+buttons.append(button_undo)
 # --- End button updates ---
+
+command_history = [] # Initialize command history list
+
+def apply_turtle_action(command):
+    action_type = command.get('action')
+    value = command.get('value')
+
+    if action_type == 'forward':
+        turtle.forward(value) # turtle.forward now takes only distance
+    elif action_type == 'left':
+        turtle.left(value)
+    elif action_type == 'right':
+        turtle.right(value)
+    elif action_type == 'pen_up':
+        turtle.pen_up()
+    elif action_type == 'pen_down':
+        turtle.pen_down()
+    # Add other actions here if any in the future (e.g., set_color)
+
+def execute_and_store_command(command):
+    apply_turtle_action(command)
+    command_history.append(command)
+
+def replay_history(history_to_replay):
+    # 1. Clear the drawing surface
+    drawing_surface.fill(WHITE)
+
+    # 2. Reset the turtle to its initial state
+    # These values should match the turtle's initial instantiation values
+    initial_x = SCREEN_WIDTH // 2
+    initial_y = (SCREEN_HEIGHT - 100) // 2 # Consistent with turtle instantiation
+    initial_angle = 0
+
+    turtle.x = initial_x
+    turtle.y = initial_y
+    turtle.angle = initial_angle
+    turtle.pen_down() # Default pen state
+
+    # 3. Iterate through the provided history and apply each command
+    for command in history_to_replay:
+        apply_turtle_action(command)
+
+    # Note: The main game loop will handle blitting drawing_surface
+    # and drawing the turtle icon in its final replayed state.
+
+def action_undo_last_command():
+    if command_history: # Check if the list is not empty
+        command_history.pop() # Remove the last command
+        replay_history(command_history) # Replay the modified history
+    else:
+        # Optional: print("No commands to undo.") or some status bar message
+        pass # Do nothing if history is empty
 
 # Game loop
 running = True
@@ -170,11 +240,11 @@ while running:
         # --- Add Keyboard Event Handling Here ---
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                turtle.forward(20) # No longer pass 'screen' here
+                execute_and_store_command({'action': 'forward', 'value': 20})
             elif event.key == pygame.K_LEFT:
-                turtle.left(30) # Angle 30
+                execute_and_store_command({'action': 'left', 'value': 30})
             elif event.key == pygame.K_RIGHT:
-                turtle.right(30) # Angle 30
+                execute_and_store_command({'action': 'right', 'value': 30})
         # --- End Keyboard Event Handling ---
 
     # Update game state
