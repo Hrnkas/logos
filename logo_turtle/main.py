@@ -30,7 +30,7 @@ clock = pygame.time.Clock()
 # Create a Turtle instance
 # Adjust Y position to be in the drawable area, considering buttons at the bottom
 # Buttons are ~50px high (40px + 10px margin). Let's center turtle in remaining space.
-drawable_height = SCREEN_HEIGHT - 50 
+drawable_height = SCREEN_HEIGHT - 50
 turtle = Turtle(SCREEN_WIDTH // 2, drawable_height // 2, angle=0, color=RED)
 
 # --- Create Buttons ---
@@ -122,7 +122,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        
+
         # Pass event to buttons
         for btn in buttons:
             btn.handle_event(event) # handle_event will call the action if button is clicked
@@ -137,14 +137,14 @@ while running:
                 turtle.right(30) # Angle 30
         # --- End Keyboard Event Handling ---
 
-    # Update game state 
+    # Update game state
     # (Turtle state is updated by button actions via their callbacks or keyboard events)
 
     # Draw graphics
     screen.fill(WHITE)  # Fill screen with white
-    
+
     turtle.draw(screen) # Draw the turtle
-    
+
     # Draw buttons
     for btn in buttons:
         btn.draw(screen)

@@ -6,7 +6,7 @@ class TestTurtle(unittest.TestCase):
 
     def setUp(self):
         # Pygame needs to be initialized to create a Surface
-        pygame.init() 
+        pygame.init()
         # Create a dummy surface for the turtle to be "drawn" on, if needed for tests.
         # Some methods might not need a surface, but draw() does.
         self.mock_surface = pygame.Surface((100, 100))
@@ -94,7 +94,7 @@ class TestTurtle(unittest.TestCase):
             turtle.draw(self.mock_surface)
         except Exception as e:
             self.fail(f"turtle.draw() raised an exception: {e}")
-            
+
     def tearDown(self):
         pygame.quit()
 

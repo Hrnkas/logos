@@ -20,7 +20,7 @@ class Turtle:
         # and rotate clockwise.
         # math.sin and math.cos expect radians.
         # Angle: 0=Up, 90=Right, 180=Down, 270=Left
-        
+
         # Center of the turtle
         center_x = self.x
         center_y = self.y
@@ -39,7 +39,7 @@ class Turtle:
         # Base Left: (-size, 2/3 * size)
         # Base Right: (size, 2/3 * size)
         # Let's use a simpler model: tip is (0, -size), base corners are (-size*0.75, size*0.5) and (size*0.75, size*0.5)
-        
+
         # Points for a triangle pointing upwards (angle = 0) centered at (0,0)
         # Height of triangle = 2 * size, Base of triangle = 1.5 * size
         points_no_rotation = [
@@ -53,15 +53,21 @@ class Turtle:
         # Our angle: 0 is North (Up, -Y), 90 is East (Right, +X)
         # So, we need to convert our angle to standard math angle for rotation.
         # Math angle = 90 - Turtle angle (or (450 - Turtle angle) % 360)
-        math_angle_rad = math.radians(90 - self.angle) 
-        
+        math_angle_rad = math.radians(90 - self.angle)
+
         rotated_points = []
         for x_rel, y_rel in points_no_rotation:
             x_rot = x_rel * math.cos(math_angle_rad) - y_rel * math.sin(math_angle_rad)
             y_rot = x_rel * math.sin(math_angle_rad) + y_rel * math.cos(math_angle_rad)
             rotated_points.append((self.x + x_rot, self.y + y_rot))
 
-        pygame.draw.polygon(surface, self.color, rotated_points)
+        # Visual feedback for pen state
+        if self.is_pen_down:
+            # Pen down: Draw filled polygon (black)
+            pygame.draw.polygon(surface, (0, 0, 0), rotated_points, 0) # 0 for fill
+        else:
+            # Pen up: Draw outline polygon (using turtle's color)
+            pygame.draw.polygon(surface, self.color, rotated_points, 2) # width > 0 for outline
 
     def forward(self, distance, surface): # Added surface parameter
         # Convert angle to radians
@@ -71,13 +77,13 @@ class Turtle:
         rad_angle = math.radians(self.angle)
         delta_x = distance * math.sin(rad_angle)
         delta_y = -distance * math.cos(rad_angle) # Negative because screen Y is downwards
-        
+
         new_x = self.x + delta_x
         new_y = self.y + delta_y
-        
+
         if self.is_pen_down:
             pygame.draw.line(surface, self.color, (self.x, self.y), (new_x, new_y), 2) # Draw line
-            
+
         self.x = new_x
         self.y = new_y
 

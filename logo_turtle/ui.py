@@ -15,10 +15,10 @@ class Button:
         draw_color = self.color
         if self.is_hovered:
             # Slightly darken the button color when hovered
-            draw_color = (max(0, self.color[0] - 30), 
-                          max(0, self.color[1] - 30), 
+            draw_color = (max(0, self.color[0] - 30),
+                          max(0, self.color[1] - 30),
                           max(0, self.color[2] - 30))
-        
+
         pygame.draw.rect(surface, draw_color, self.rect)
         pygame.draw.rect(surface, self.text_color, self.rect, 2) # Border
 
@@ -36,7 +36,7 @@ class Button:
                 self.is_hovered = True
             else:
                 self.is_hovered = False
-        
+
         # Check for click
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1 and self.is_clicked(event.pos): # event.button == 1 means left click
