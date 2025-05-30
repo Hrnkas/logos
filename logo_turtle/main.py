@@ -127,8 +127,18 @@ while running:
         for btn in buttons:
             btn.handle_event(event) # handle_event will call the action if button is clicked
 
+        # --- Add Keyboard Event Handling Here ---
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                turtle.forward(20, screen) # Distance 20, screen for drawing
+            elif event.key == pygame.K_LEFT:
+                turtle.left(30) # Angle 30
+            elif event.key == pygame.K_RIGHT:
+                turtle.right(30) # Angle 30
+        # --- End Keyboard Event Handling ---
+
     # Update game state 
-    # (Turtle state is updated by button actions via their callbacks)
+    # (Turtle state is updated by button actions via their callbacks or keyboard events)
 
     # Draw graphics
     screen.fill(WHITE)  # Fill screen with white
