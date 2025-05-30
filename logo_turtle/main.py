@@ -19,6 +19,7 @@ BLUE = (0, 0, 200)  # For Turn buttons
 LIGHT_GREY = (220, 220, 220)
 ORANGE = (255, 165, 0) # For Pen Up
 CYAN = (0, 255, 255)   # For Pen Down
+YELLOW = (255, 255, 0) # For Clear Screen
 
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -55,6 +56,14 @@ def action_pen_up():
 
 def action_pen_down():
     turtle.pen_down()
+
+# --- Add new action here ---
+def action_clear_screen():
+    screen.fill(WHITE)
+    # Note: In the current main loop, screen.fill(WHITE) happens every frame anyway.
+    # This action provides an explicit user command. If drawing becomes persistent on a
+    # separate surface later, this function would clear that surface.
+# --- End new actions ---
 # --- End new actions ---
 
 button_forward = Button(
@@ -113,6 +122,23 @@ button_pen_down = Button(
 
 # Add new buttons to the list
 buttons = [button_forward, button_left, button_right, button_pen_up, button_pen_down]
+
+# --- Define new Clear Screen button ---
+clear_button_x = SCREEN_WIDTH - BUTTON_WIDTH - BUTTON_MARGIN
+clear_button_y = BUTTON_MARGIN
+
+button_clear_screen = Button(
+    x=clear_button_x,
+    y=clear_button_y,
+    width=BUTTON_WIDTH,
+    height=BUTTON_HEIGHT,
+    text="Clear Screen",
+    color=YELLOW,
+    text_color=BLACK,
+    action=action_clear_screen
+)
+
+buttons.append(button_clear_screen)
 # --- End button updates ---
 
 # Game loop
