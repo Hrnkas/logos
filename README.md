@@ -7,7 +7,7 @@ This project creates a basic turtle graphics environment. Users can control a "t
 ## Current Features
 - A `Turtle` character that can be positioned and oriented on the screen.
 - The turtle is rendered as a triangle.
-  - **Visual Pen State Feedback:** The turtle triangle is drawn filled (black) when the pen is down, and as an outline (using its designated color) when the pen is up.
+- **Visual Pen State Feedback:** The turtle triangle is drawn filled (black) when the pen is down, and as an outline (using its designated color) when the pen is up.
 - **UI Buttons for Turtle, Pen, and Screen Control:**
   - **Forward:** Moves the turtle forward. Draws a line if the pen is down.
   - **Turn Left:** Rotates the turtle to its left.
@@ -73,3 +73,4 @@ This project can be compiled into a Windows executable using PyInstaller. A batc
 **Notes:**
 - The build script currently creates a one-folder bundle (`--onedir`). This means it generates a folder with the main executable and its dependencies.
 - If you wish to add a custom icon, you can place an `.ico` file (e.g., in an `assets` directory) and uncomment/modify the `ICON_PATH` variable and the `--icon` option in `build.bat`.
+
