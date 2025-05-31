@@ -56,9 +56,9 @@ REM   --clean: Clean PyInstaller cache and remove temporary files before buildin
 REM   --noconfirm: Replace output directory without asking for confirmation
 REM   Optional: --icon=%ICON_PATH% (if you have an icon)
 
-%PYINSTALLER_EXE% --name %APP_NAME% --onedir --windowed --clean --noconfirm %MAIN_SCRIPT%
+%PYINSTALLER_EXE% --name %APP_NAME% --onedir --windowed --clean --noconfirm -m logo_turtle.main
 REM For a single file executable (can be slower to start, might have issues with some libs):
-REM %PYINSTALLER_EXE% --name %APP_NAME% --onefile --windowed --clean --noconfirm %MAIN_SCRIPT%
+REM %PYINSTALLER_EXE% --name %APP_NAME% --onefile --windowed --clean --noconfirm -m logo_turtle.main
 
 if %errorlevel% neq 0 (
     echo PyInstaller failed to build the executable.
