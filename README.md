@@ -2,7 +2,7 @@
 
 A simple Logo-like programming environment using Python and Pygame.
 
-This project creates a basic turtle graphics environment. Users can control a "turtle" cursor on the screen using UI buttons or keyboard shortcuts, making it draw lines as it moves (or not, depending on pen state). The turtle is visually represented by a triangle, which also provides feedback on the current pen state. The screen can be cleared of drawings using a dedicated button.
+This project creates a basic turtle graphics environment. Users can control a "turtle" cursor on the screen using UI buttons or keyboard shortcuts, making it draw lines as it moves (or not, depending on pen state). The turtle is visually represented by a triangle, which also provides feedback on the current pen state. The screen can be cleared of drawings using a dedicated button. The application features a main drawing canvas for the turtle and a side panel displaying a history of executed commands.
 
 ## Current Features
 - A `Turtle` character that can be positioned and oriented on the screen.
@@ -18,6 +18,10 @@ This project creates a basic turtle graphics environment. Users can control a "t
   - **Undo:** Reverts the last executed turtle action (movement, turn, or pen state change).
 - **Keyboard Controls:**
   - Arrow keys for basic turtle movement (forward, turn left, turn right).
+- **Command History Panel:**
+  - The screen is divided into a main drawing area (left) and a panel on the right.
+  - This panel displays a list of the recently executed commands (e.g., "FORWARD 20", "PEN UP").
+  - The history updates dynamically as commands are performed or undone. Clearing the screen also clears the history.
 - Basic Pygame window setup.
 - Line drawing when the turtle moves with the pen down (using the turtle's designated color).
 

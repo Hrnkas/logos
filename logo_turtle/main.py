@@ -6,8 +6,12 @@ from .ui import Button # Relative import
 pygame.init()
 
 # Screen dimensions
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600 # Increased height to make space for buttons
+# SCREEN_WIDTH = 800 # Old width
+SCREEN_HEIGHT = 600  # Original height
+DRAWING_AREA_WIDTH = 800 # Original screen width becomes drawing area
+COMMAND_PANEL_WIDTH = 250
+SCREEN_WIDTH = DRAWING_AREA_WIDTH + COMMAND_PANEL_WIDTH # New total width
+COMMAND_PANEL_X_START = DRAWING_AREA_WIDTH
 SCREEN_TITLE = "Logo Turtle"
 
 # Colors
@@ -22,6 +26,12 @@ CYAN = (0, 255, 255)   # For Pen Down
 YELLOW = (255, 255, 0) # For Clear Screen
 PURPLE = (128, 0, 128) # For Undo button
 
+# Command Panel constants
+PANEL_BG_COLOR = (230, 230, 230)
+PANEL_TEXT_COLOR = (0, 0, 0)
+PANEL_BORDER_COLOR = (180, 180, 180)
+MAX_HISTORY_DISPLAY = 20 # Max number of commands to show
+
 # Button dimensions and positions
 BUTTON_WIDTH = 120
 BUTTON_HEIGHT = 40
@@ -29,20 +39,21 @@ BUTTON_MARGIN = 10
 BUTTON_Y = SCREEN_HEIGHT - BUTTON_HEIGHT - BUTTON_MARGIN # Y position for bottom row buttons
 
 # Create the screen
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) # Uses new total SCREEN_WIDTH
 pygame.display.set_caption(SCREEN_TITLE)
 
 # Create a dedicated surface for drawing lines
-drawing_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+drawing_surface = pygame.Surface((DRAWING_AREA_WIDTH, SCREEN_HEIGHT)) # Uses DRAWING_AREA_WIDTH
 drawing_surface.fill(WHITE) # Initial background for the drawing canvas
 
 # Clock for controlling frame rate
 clock = pygame.time.Clock()
+history_font = pygame.font.Font(None, 24) # Font for command history panel
 
 # Create a Turtle instance
 # Adjust Y position to be in the drawable area, considering buttons at the bottom
 drawable_height = SCREEN_HEIGHT - 50
-turtle = Turtle(SCREEN_WIDTH // 2, drawable_height // 2, angle=0, color=RED, drawing_surface=drawing_surface) # Pass drawing_surface
+turtle = Turtle(DRAWING_AREA_WIDTH // 2, drawable_height // 2, angle=0, color=RED, drawing_surface=drawing_surface) # Use DRAWING_AREA_WIDTH
 
 # Command history
 command_history = [] # Initialize command history list
@@ -73,7 +84,7 @@ def replay_history(history_to_replay):
     drawing_surface.fill(WHITE)
 
     # 2. Reset the turtle to its initial state
-    initial_x = SCREEN_WIDTH // 2
+    initial_x = DRAWING_AREA_WIDTH // 2 # Use DRAWING_AREA_WIDTH
     initial_y = (SCREEN_HEIGHT - 100) // 2 # Consistent with turtle instantiation
     initial_angle = 0
 
@@ -109,7 +120,7 @@ def action_clear_screen():
     drawing_surface.fill(WHITE) # Clears the drawing canvas
 
     # Reset turtle's state
-    initial_x = SCREEN_WIDTH // 2
+    initial_x = DRAWING_AREA_WIDTH // 2 # Use DRAWING_AREA_WIDTH
     initial_y = (SCREEN_HEIGHT - 100) // 2
     initial_angle = 0
 
@@ -127,6 +138,45 @@ def action_undo_last_command():
         replay_history(command_history) # Replay the modified history
     else:
         pass # Do nothing if history is empty
+
+def format_command_for_display(command):
+    action = command.get('action', 'UNKNOWN').upper()
+    value = command.get('value', '')
+    if action in ['FORWARD', 'LEFT', 'RIGHT']:
+        return f"{action} {value}"
+    elif action in ['PEN_UP', 'PEN_DOWN']:
+        return action.replace('_', ' ')
+    return action # Default for unknown or valueless actions
+
+def draw_command_panel(surface, rect, command_hist, text_font):
+    # Draw panel background
+    pygame.draw.rect(surface, PANEL_BG_COLOR, rect)
+    pygame.draw.rect(surface, PANEL_BORDER_COLOR, rect, 2) # Border
+
+    # Title
+    title_text = "Command History"
+    title_surf = text_font.render(title_text, True, PANEL_TEXT_COLOR)
+    title_rect = title_surf.get_rect(centerx=rect.centerx, top=rect.top + 5)
+    surface.blit(title_surf, title_rect)
+
+    # Display commands (latest at the bottom)
+    start_y = title_rect.bottom + 10
+    line_height = text_font.get_linesize()
+
+    # Display up to MAX_HISTORY_DISPLAY commands
+    # Take the last MAX_HISTORY_DISPLAY items from history
+    display_history = command_hist[-MAX_HISTORY_DISPLAY:]
+
+    for i, command_item in enumerate(display_history): # Use command_item to avoid conflict
+        command_str = f"{i+1}. {format_command_for_display(command_item)}" # Add numbering
+        command_surf = text_font.render(command_str, True, PANEL_TEXT_COLOR)
+        # Position text line by line
+        text_pos_y = start_y + (i * line_height)
+        # Check if text exceeds panel height (minus some padding)
+        if text_pos_y + line_height > rect.bottom - 5:
+            break # Stop if no more space
+
+        surface.blit(command_surf, (rect.left + 10, text_pos_y))
 
 # --- Create Buttons ---
 button_forward = Button(
@@ -182,7 +232,8 @@ button_pen_down = Button(
     action=action_pen_down
 )
 
-clear_button_x = SCREEN_WIDTH - BUTTON_WIDTH - BUTTON_MARGIN
+# Position Clear Screen button (centered at top of command panel)
+clear_button_x = COMMAND_PANEL_X_START + (COMMAND_PANEL_WIDTH - BUTTON_WIDTH) // 2
 clear_button_y = BUTTON_MARGIN
 button_clear_screen = Button(
     x=clear_button_x,
@@ -195,8 +246,9 @@ button_clear_screen = Button(
     action=action_clear_screen
 )
 
-undo_button_x = SCREEN_WIDTH - (BUTTON_WIDTH + BUTTON_MARGIN) * 2
-undo_button_y = BUTTON_MARGIN
+# Position Undo button (below Clear Screen, centered in command panel)
+undo_button_x = COMMAND_PANEL_X_START + (COMMAND_PANEL_WIDTH - BUTTON_WIDTH) // 2
+undo_button_y = BUTTON_MARGIN + BUTTON_HEIGHT + BUTTON_MARGIN
 button_undo = Button(
     x=undo_button_x,
     y=undo_button_y,
@@ -232,10 +284,21 @@ while running:
                 execute_and_store_command({'action': 'right', 'value': 30})
 
     # Draw graphics
-    screen.fill(WHITE)
+    screen.fill(WHITE)  # Clear main screen (or fill with a UI background color)
+
+    # Blit the drawing_surface (where turtle lines are) onto the main screen
     screen.blit(drawing_surface, (0, 0))
+
+    # Draw the turtle icon itself (triangle) on the main screen
     turtle.draw(screen)
 
+    # --- Draw Command History Panel ---
+    panel_rect = pygame.Rect(COMMAND_PANEL_X_START, 0, COMMAND_PANEL_WIDTH, SCREEN_HEIGHT)
+    draw_command_panel(screen, panel_rect, command_history, history_font) # Draw panel
+    # --- End Panel Drawing ---
+
+    # Draw buttons (on main screen)
+    # Buttons like Clear and Undo are expected to be on top of the panel background
     for btn in buttons:
         btn.draw(screen)
 
