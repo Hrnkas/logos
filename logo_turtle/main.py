@@ -1,6 +1,6 @@
 import pygame
-from .turtle import Turtle # Relative import
-from .ui import Button # Relative import
+from logo_turtle.turtle import Turtle # Relative import
+from logo_turtle.ui import Button # Relative import
 
 # Initialize Pygame
 pygame.init()
